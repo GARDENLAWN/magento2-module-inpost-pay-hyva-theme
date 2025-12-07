@@ -1,0 +1,62 @@
+<?php
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HyvaCsp;
+use InPost\InPostPay\ViewModel\Widget;
+use Magento\Framework\View\Element\Template;
+
+/** @var ViewModelRegistry $viewModels */
+/** @var Template $block */
+/** @var Widget $widgetViewModel */
+/** @var HyvaCsp $hyvaCsp */
+
+$widgetViewModel = $viewModels->require(Widget::class);
+
+$widgetViewModel = $block->getData('widget_view_model');
+if (!$widgetViewModel->isEnabled() || !$widgetViewModel->isEnabledOnProductCart()) {
+    return;
+}
+
+$productId = $block->getRequest()->getParam('id');
+$productId = is_scalar($productId) ? (string)$productId : "";
+$isProductSaleable = $widgetViewModel->validateProductIsSaleableById((int)$productId);
+
+if (!$isProductSaleable || $widgetViewModel->isProductRestricted((int)$productId)) {
+    return;
+}
+
+$bindingPlace = $block->getBindingPlace();
+$layoutConfig = $widgetViewModel->getLayoutConfig();
+$widgetWrapperClass = "inpay-widget-wrapper";
+?>
+
+<?= $block->getChildBlock('inpost.hyva.widget.product.script')->setData('productId', $productId)->toHtml() ?>
+
+<div x-data="inPostInPostPayHyvaThemeInitializeWidgetProduct"
+     @private-content-loaded.window="inPostInPostPayHyvaThemeInitializeWidgetProductPrivateContentLoadedWindow6"
+     class="<?= /* @noEscape */
+     $widgetWrapperClass . ' ' . /* @noEscape */
+     $bindingPlace ?>">
+    <inpost-izi-button
+        binding_place="<?= /* @noEscape */
+        $bindingPlace ?>"
+        data-product-id="<?= /* @noEscape */
+        $productId ?>"
+        variation="<?= /* @noEscape */
+        $layoutConfig ?>"
+    ></inpost-izi-button>
+</div>
+
+<script>
+<?php /** Generated with hyva-csp-helper.php */ ?>
+function inPostInPostPayHyvaThemeInitializeWidgetProduct() {
+    return Object.assign(
+        initializeInpostPay_<?= $bindingPlace ?>()
+        ,{
+            ['inPostInPostPayHyvaThemeInitializeWidgetProductPrivateContentLoadedWindow6'](event) {return this.receiveCustomerData(this.$event.detail.data)},
+        }
+    )
+}
+window.addEventListener('alpine:init', () => Alpine.data('inPostInPostPayHyvaThemeInitializeWidgetProduct', inPostInPostPayHyvaThemeInitializeWidgetProduct), {once: true});
+</script>
+<?php $hyvaCsp->registerInlineScript() ?>

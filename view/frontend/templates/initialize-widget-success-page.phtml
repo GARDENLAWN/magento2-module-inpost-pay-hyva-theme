@@ -1,0 +1,48 @@
+<?php
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HyvaCsp;
+use InPost\InPostPay\ViewModel\Widget;
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\Escaper;
+
+
+/** @var ViewModelRegistry $viewModels */
+/** @var Escaper $escaper */
+/** @var Template $block */
+/** @var Widget $widgetViewModel */
+/** @var HyvaCsp $hyvaCsp */
+
+$widgetViewModel = $viewModels->require(Widget::class);
+
+$widgetViewModel = $block->getData('widget_view_model');
+if (!$widgetViewModel->isEnabled()
+    || !$widgetViewModel->isInPostPayOrder()
+    || !$widgetViewModel->isEnabledOnSuccessPage()) {
+    return;
+}
+
+$widgetWrapperClass = "inpay-widget-wrapper";
+$bindingPlace = $block->getBindingPlace();
+?>
+
+<?= $block->getChildBlock('inpost.hyva.widget.success.page.script')->toHtml() ?>
+
+<div x-data="inPostInPostPayHyvaThemeInitializeWidgetSuccessPage"
+     @private-content-loaded.window="inPostInPostPayHyvaThemeInitializeWidgetSuccessPagePrivateContentLoadedWindow8"
+     class="container <?= /* @noEscape */ $widgetWrapperClass . ' ' . /* @noEscape */ $bindingPlace?>">
+    <inpost-thank-you />
+</div>
+<script>
+<?php /** Generated with hyva-csp-helper.php */ ?>
+function inPostInPostPayHyvaThemeInitializeWidgetSuccessPage() {
+    return Object.assign(
+        initializeInpostPay_<?= $bindingPlace ?>()
+        ,{
+            ['inPostInPostPayHyvaThemeInitializeWidgetSuccessPagePrivateContentLoadedWindow8'](event) {return this.receiveCustomerData(this.$event.detail.data)},
+        }
+    )
+}
+window.addEventListener('alpine:init', () => Alpine.data('inPostInPostPayHyvaThemeInitializeWidgetSuccessPage', inPostInPostPayHyvaThemeInitializeWidgetSuccessPage), {once: true});
+</script>
+<?php $hyvaCsp->registerInlineScript() ?>

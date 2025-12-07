@@ -1,0 +1,44 @@
+<?php
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use InPost\InPostPay\ViewModel\Widget;
+use Magento\Framework\View\Element\Template;
+
+/** @var ViewModelRegistry $viewModels */
+/** @var Template $block */
+/** @var Widget $widgetViewModel */
+
+$widgetViewModel = $viewModels->require(Widget::class);
+
+$widgetViewModel = $block->getData('widget_view_model');
+if (!$widgetViewModel->isEnabled() || !$widgetViewModel->isEnabledInMiniCart()) {
+    return;
+}
+$bindingPlace = $block->getBindingPlace();
+$layoutConfig = $widgetViewModel->getLayoutConfig();
+$widgetWrapperClass = "inpay-widget-wrapper";
+?>
+
+<?= $block->getChildBlock('inpost.hyva.widget.minicart.script')->toHtml() ?>
+
+<div x-data="inPostInPostPayHyvaThemeInitializeWidgetMinicart"
+     @private-content-loaded.window="inPostInPostPayHyvaThemeInitializeWidgetMinicartPrivateContentLoadedWindow5"
+     class="<?= /* @noEscape */ $widgetWrapperClass . ' ' . /* @noEscape */ $bindingPlace?>">
+    <inpost-izi-button
+        variation="<?= /* @noEscape */ $layoutConfig ?>"
+        binding_place="<?= /* @noEscape */ $bindingPlace ?>"
+    ></inpost-izi-button>
+</div>
+<script>
+<?php /** Generated with hyva-csp-helper.php */ ?>
+function inPostInPostPayHyvaThemeInitializeWidgetMinicart() {
+    return Object.assign(
+        initializeInpostPay_<?= $bindingPlace ?>()
+        ,{
+            ['inPostInPostPayHyvaThemeInitializeWidgetMinicartPrivateContentLoadedWindow5'](event) {return this.receiveCustomerData(this.$event.detail.data)},
+        }
+    )
+}
+window.addEventListener('alpine:init', () => Alpine.data('inPostInPostPayHyvaThemeInitializeWidgetMinicart', inPostInPostPayHyvaThemeInitializeWidgetMinicart), {once: true});
+</script>
+<?php $hyvaCsp->registerInlineScript() ?>
