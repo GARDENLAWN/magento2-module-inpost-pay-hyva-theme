@@ -1,7 +1,7 @@
 {
   "name": "gardenlawn/magento2-module-inpost-pay-hyva-theme",
   "description": "Module integrates InPost Pay Mobile application with Magento store. Implementation for Hyvä Theme",
-  "version": "2.4.0",
+  "version": "1.0.0",
   "type": "magento2-module",
   "license": [
     "CC-BY-NC-ND-4.0"
@@ -12,8 +12,8 @@
     "monolog/monolog": "*",
     "psr/log": "*",
     "guzzlehttp/guzzle": "*",
-    "gardenlawn/magento2-module-inpost-pay": ">=2.4.0",
-    "gardenlawn/magento2-module-restrictions": ">=2.1.0",
+    "gardenlawn/magento2-module-inpost-pay": "*",
+    "gardenlawn/magento2-module-restrictions": "*",
     "hyva-themes/magento2-default-theme": "*",
     "hyva-themes/magento2-theme-module": "^1.3.11"
   },
